@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SplitEase - Expense Sharing App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navbar -->
+       <!-- Navbar -->
+       <nav class="navbar navbar-expand-lg navbar-light bg-white border-0 fixed-top ">
+        <div class="container">
+            <div class="navbar-wrapper mx-auto" style="width:100%; background: white; border-radius: 15px; box-shadow: 5px 5px 5px 5px rgba(0,0,0,0.1); padding: 1rem 1.5rem;">
+                <div class="d-flex justify-content-between align-items-center w-100">
+                    <a class="navbar-brand fw-bold" href="#">
+                        <img src="split.png" alt="SplitEase Logo" width="110px" height="50px" class="d-inline-block align-text-top me-2">
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item me-2">
+                                <a class="nav-link btn btn-outline-primary rounded-pill px-4" href="#" data-bs-toggle="modal" data-bs-target="#groupModal">
+                                    <i class="bi bi-people"></i> Manage Group
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link btn btn-primary rounded-pill px-4" href="#" data-bs-toggle="modal" data-bs-target="#settleModal">
+                                    <i class="bi bi-arrow-left-right"></i> Settle Up
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link btn btn-outline-danger rounded-pill px-4" href="#" onclick="logout()">
+                                    <i class="bi bi-box-arrow-right"></i> Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-5 pt-3" style="margin-top: 100px !important;">
+        <div class="row g-4">
+            <!-- Sidebar -->
+            <div class="col-md-4 col-lg-3 d-none d-md-block sidebar p-3">
+                <div style="background: white; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 1.5rem;">
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="fs-5 fw-semibold">Group: <span id="currentGroupName">Friends Trip</span></span>
+                    </div>
+                    <hr>
+                    <div class="nav flex-column nav-pills">
+                        <a class="nav-link active" href="#" id="expensesTab">Expenses</a>
+                        <a class="nav-link" href="#" id="balancesTab">Balances</a>
+                        <a class="nav-link" href="#" id="activityTab">Activity</a>
+                    </div>
+                    <hr>
+                    <div class="pt-2">
+                        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-1 mb-1">
+                            <span>Group Members</span>
+                        </h6>
+                        <ul class="list-unstyled ps-0" id="membersList">
+                            <!-- Members will be populated here -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="col-md-8 col-lg-9 ms-sm-auto px-4 p-3" >
+               <div style="background: white; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 1.5rem;">
+
+              
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h2 id="contentTitle">Expenses</h2>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addExpenseModal">
+                            <i class="bi bi-plus-lg"></i> Add Expense
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Content sections -->
+                <div id="expensesContent" class="content-section">
+                    <div class="alert alert-info" id="noExpensesAlert">
+                        No expenses added yet. Click "Add Expense" to get started!
+                    </div>
+                    <div id="expensesList">
+                        <!-- Expenses will be populated here -->
+                    </div>
+                </div>
+
+                <div id="balancesContent" class="content-section d-none">
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Summary</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="balancesSummary">
+                                <!-- Balances summary will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Detailed Balances</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="detailedBalances">
+                                <!-- Detailed balances will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="activityContent" class="content-section d-none">
+                    <div class="list-group" id="activityList">
+                        <!-- Activity logs will be populated here -->
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Expense Modal -->
+    <div class="modal fade" id="addExpenseModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Expense</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="expenseForm">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="expenseDescription" class="form-label">Description</label>
+                                <input type="text" class="form-control" id="expenseDescription" placeholder="e.g., Dinner, Movie tickets" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="expenseAmount" class="form-label">Amount</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="expenseAmount" min="0.01" step="0.01" placeholder="0.00" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="expensePaidBy" class="form-label">Paid by</label>
+                                <select class="form-select" id="expensePaidBy" required>
+                                    <!-- Options will be populated dynamically -->
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="expenseDate" class="form-label">Date</label>
+                                <input type="date" class="form-control" id="expenseDate" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label class="form-label">Split Method</label>
+                                <div class="btn-group w-100" role="group">
+                                    <input type="radio" class="btn-check" name="splitMethod" id="splitEqually" value="equal" checked>
+                                    <label class="btn btn-outline-primary" for="splitEqually">Equal</label>
+                                    
+                                    <input type="radio" class="btn-check" name="splitMethod" id="splitExact" value="exact">
+                                    <label class="btn btn-outline-primary" for="splitExact">Exact Amount</label>
+                                    
+                                    <input type="radio" class="btn-check" name="splitMethod" id="splitPercentage" value="percentage">
+                                    <label class="btn btn-outline-primary" for="splitPercentage">Percentage</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Split equal section (default) -->
+                        <div id="splitEqualSection">
+                            <div class="mb-3">
+                                <label class="form-label">Split between</label>
+                                <div id="equalSplitMembers" class="mb-3">
+                                    <!-- Checkboxes will be populated dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Split exact section (hidden by default) -->
+                        <div id="splitExactSection" class="d-none">
+                            <div class="mb-3">
+                                <label class="form-label">Enter exact amounts</label>
+                                <div class="alert alert-info small">
+                                    Total amount left to assign: $<span id="exactAmountRemaining">0.00</span>
+                                </div>
+                                <div id="exactSplitAmounts">
+                                    <!-- Input fields will be populated dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Split percentage section (hidden by default) -->
+                        <div id="splitPercentageSection" class="d-none">
+                            <div class="mb-3">
+                                <label class="form-label">Enter percentages</label>
+                                <div class="alert alert-info small">
+                                    Percentage remaining: <span id="percentageRemaining">100</span>%
+                                </div>
+                                <div id="percentageSplitAmounts">
+                                    <!-- Input fields will be populated dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="expenseNotes" class="form-label">Notes (optional)</label>
+                            <textarea class="form-control" id="expenseNotes" rows="2" placeholder="Add any additional details"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveExpenseBtn">Save Expense</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settle Up Modal -->
+    <div class="modal fade" id="settleModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Settle Up</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="settleForm">
+                        <div class="mb-3">
+                            <label for="settleFrom" class="form-label">From</label>
+                            <select class="form-select" id="settleFrom" required>
+                                <!-- Options will be populated dynamically -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="settleTo" class="form-label">To</label>
+                            <select class="form-select" id="settleTo" required>
+                                <!-- Options will be populated dynamically -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="settleAmount" class="form-label">Amount</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" id="settleAmount" min="0.01" step="0.01" placeholder="0.00" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="settleUpBtn">Record Payment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Group Management Modal -->
+    <div class="modal fade" id="groupModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Manage Group</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="groupForm">
+                        <div class="mb-3">
+                            <label for="groupName" class="form-label">Group Name</label>
+                            <input type="text" class="form-control" id="groupName" placeholder="e.g., Roommates, Trip to Paris" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Group Members</label>
+                            <div id="groupMembers">
+                                <!-- Existing members will be shown here -->
+                            </div>
+                            <div class="input-group mt-2">
+                                <input type="text" class="form-control" id="newMemberName" placeholder="New member name">
+                                <button class="btn btn-outline-primary" type="button" id="addMemberBtn">Add</button>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Share Group Invite</label>
+                            <div class="d-flex flex-wrap">
+                                <a href="#" class="share-option me-3 mb-2" id="shareWhatsApp">
+                                    <i class="bi bi-whatsapp text-success"></i> WhatsApp
+                                </a>
+                                <a href="#" class="share-option me-3 mb-2" id="shareEmail">
+                                    <i class="bi bi-envelope text-primary"></i> Email
+                                </a>
+                                <a href="#" class="share-option mb-2" id="shareSMS">
+                                    <i class="bi bi-chat-dots text-secondary"></i> SMS
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveGroupBtn">Save Group</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Expense Details Modal -->
+    <div class="modal fade" id="expenseDetailsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="expenseDetailsTitle">Expense Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="expenseDetailsBody">
+                    <!-- Expense details will be populated here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" id="deleteExpenseBtn">Delete</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comment Modal -->
+    <div class="modal fade" id="commentModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Comment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="commentForm">
+                        <input type="hidden" id="commentExpenseId">
+                        <div class="mb-3">
+                            <label for="commentText" class="form-label">Comment</label>
+                            <textarea class="form-control" id="commentText" rows="3" required></textarea>
+                        </div>
+                    </form>
+                    <div id="existingComments">
+                        <!-- Existing comments will be shown here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveCommentBtn">Save Comment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Data structure
+        let appData = {
+            currentUser: null,
+            group: {
+                id: 'default-group',
+                name: 'Friends Trip',
+                members: [
+                    { id: 'user1', name: 'You', email: 'you@example.com', color: '#20BF55' },
+                    { id: 'user2', name: 'Alex', email: 'alex@example.com', color: '#3498db' },
+                    { id: 'user3', name: 'Sam', email: 'sam@example.com', color: '#9b59b6' }
+                ]
+            },
+            expenses: [],
+            settlements: [],
+            comments: [],
+            activities: []
+        };
+
+        // Initialize the app when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Set current user
+            const userData = JSON.parse(currentUser);
+            appData.currentUser = userData.email;
+
+            loadDataFromStorage();
+            initializeApp();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Initial UI rendering
+            updateUI();
+        });
+
+        // Load data from localStorage if available
+        function loadDataFromStorage() {
+            const savedData = localStorage.getItem('splitEaseData');
+            if (savedData) {
+                appData = JSON.parse(savedData);
+            }
+        }
+
+        // Save data to localStorage
+        function saveDataToStorage() {
+            localStorage.setItem('splitEaseData', JSON.stringify(appData));
+        }
+
+        // Initialize app components
+        function initializeApp() {
+            // Set today's date as default for expense date
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('expenseDate').value = today;
+        }
+
+        // Set up all event listeners
+        function setupEventListeners() {
+            // Navigation tabs
+            document.getElementById('expensesTab').addEventListener('click', () => switchTab('expenses'));
+            document.getElementById('balancesTab').addEventListener('click', () => switchTab('balances'));
+            document.getElementById('activityTab').addEventListener('click', () => switchTab('activity'));
+            
+            // Split method radio buttons
+            document.querySelectorAll('input[name="splitMethod"]').forEach(radio => {
+                radio.addEventListener('change', updateSplitMethodSection);
+            });
+            
+            // Add expense button
+            document.getElementById('saveExpenseBtn').addEventListener('click', saveExpense);
+            
+            // Group management
+            document.getElementById('addMemberBtn').addEventListener('click', addGroupMember);
+            document.getElementById('saveGroupBtn').addEventListener('click', saveGroup);
+            
+            // Settlement
+            document.getElementById('settleUpBtn').addEventListener('click', recordSettlement);
+            
+            // Expense details modal
+            document.getElementById('deleteExpenseBtn').addEventListener('click', deleteExpense);
+            
+            // Comments
+            document.getElementById('saveCommentBtn').addEventListener('click', saveComment);
+            
+            // Sharing options
+            document.getElementById('shareWhatsApp').addEventListener('click', shareViaWhatsApp);
+            document.getElementById('shareEmail').addEventListener('click', shareViaEmail);
+            document.getElementById('shareSMS').addEventListener('click', shareViaSMS);
+            
+            // Settle form events
+            document.getElementById('settleFrom').addEventListener('change', updateSettleToDropdown);
+            
+            // Exact amount and percentage inputs events for real-time updates
+            document.addEventListener('input', function(e) {
+                if (e.target.classList.contains('exact-amount-input')) {
+                    updateExactAmountRemaining();
+                } else if (e.target.classList.contains('percentage-input')) {
+                    updatePercentageRemaining();
+                }
+            });
+        }
+
+        // Update UI based on current data
+        function updateUI() {
+            updateGroupInfo();
+            updateMembersList();
+            updateExpensesList();
+            updateBalances();
+            updateActivityList();
+            updateExpensePaidByDropdown();
+            updateEqualSplitMembersCheckboxes();
+            updateSettleFormDropdowns();
+        }
+
+        // Switch between tabs (expenses, balances, activity)
+        function switchTab(tabName) {
+            const tabs = ['expenses', 'balances', 'activity'];
+            
+            // Update active tab
+            tabs.forEach(tab => {
+                const tabElement = document.getElementById(`${tab}Tab`);
+                const contentElement = document.getElementById(`${tab}Content`);
+                
+                if (tab === tabName) {
+                    tabElement.classList.add('active');
+                    contentElement.classList.remove('d-none');
+                    document.getElementById('contentTitle').textContent = tabName.charAt(0).toUpperCase() + tabName.slice(1);
+                } else {
+                    tabElement.classList.remove('active');
+                    contentElement.classList.add('d-none');
+                }
+            });
+        }
+
+        // Update group information display
+        function updateGroupInfo() {
+            document.getElementById('currentGroupName').textContent = appData.group.name;
+            document.getElementById('groupName').value = appData.group.name;
+            
+            // Update group members list in group modal
+            const groupMembersContainer = document.getElementById('groupMembers');
+            groupMembersContainer.innerHTML = '';
+            
+            appData.group.members.forEach(member => {
+                const memberDiv = document.createElement('div');
+                memberDiv.className = 'd-flex justify-content-between align-items-center mb-2';
+                memberDiv.innerHTML = `
+                    <div>
+                        <span class="user-icon" style="background-color: ${member.color}">${member.name.charAt(0)}</span>
+                        <span class="ms-2">${member.name}</span>
+                    </div>
+                    ${member.id !== appData.currentUser ? `
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-member" data-member-id="${member.id}">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    ` : ''}
+                `;
+                groupMembersContainer.appendChild(memberDiv);
+            });
+            
+            // Add event listeners to remove buttons
+            document.querySelectorAll('.remove-member').forEach(button => {
+                button.addEventListener('click', function() {
+                    const memberId = this.getAttribute('data-member-id');
+                    removeGroupMember(memberId);
+                });
+            });
+        }
+
+        // Update members list in sidebar
+        function updateMembersList() {
+            const membersListContainer = document.getElementById('membersList');
+            membersListContainer.innerHTML = '';
+            
+            appData.group.members.forEach(member => {
+                const memberItem = document.createElement('li');
+                memberItem.className = 'd-flex align-items-center mb-2';
+                memberItem.innerHTML = `
+                    <span class="user-icon me-2" style="background-color: ${member.color}">${member.name.charAt(0)}</span>
+                    <span>${member.name}${member.id === appData.currentUser ? ' (You)' : ''}</span>
+                `;
+                membersListContainer.appendChild(memberItem);
+            });
+        }
+
+        // Update the expenses list
+        function updateExpensesList() {
+            const expensesListContainer = document.getElementById('expensesList');
+            const noExpensesAlert = document.getElementById('noExpensesAlert');
+            
+            if (appData.expenses.length === 0) {
+                expensesListContainer.innerHTML = '';
+                noExpensesAlert.classList.remove('d-none');
+                return;
+            }
+            
+            noExpensesAlert.classList.add('d-none');
+            expensesListContainer.innerHTML = '';
+            
+            // Sort expenses by date (newest first)
+            const sortedExpenses = [...appData.expenses].sort((a, b) => 
+                new Date(b.date) - new Date(a.date)
+            );
+            
+            sortedExpenses.forEach(expense => {
+                const paidByMember = appData.group.members.find(m => m.id === expense.paidBy);
+                
+                const expenseItem = document.createElement('div');
+                expenseItem.className = 'card mb-3 expense-item';
+                expenseItem.setAttribute('data-expense-id', expense.id);
+                
+                let splitDetails = '';
+                if (expense.splitMethod === 'equal') {
+                    splitDetails = 'Split equally';
+                } else if (expense.splitMethod === 'exact') {
+                    splitDetails = 'Split by exact amounts';
+                } else if (expense.splitMethod === 'percentage') {
+                    splitDetails = 'Split by percentages';
+                }
+                
+                // Count comments for this expense
+                const commentCount = appData.comments.filter(c => c.expenseId === expense.id).length;
+                
+                expenseItem.innerHTML = `
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="d-flex align-items-center">
+                                <span class="user-icon me-3" style="background-color: ${paidByMember.color}">
+                                    ${paidByMember.name.charAt(0)}
+                                </span>
+                                <div>
+                                    <h5 class="card-title mb-1">${expense.description}</h5>
+                                    <p class="card-text text-muted mb-0">
+                                        ${formatDate(expense.date)} • ${paidByMember.name} paid 
+                                        • ${splitDetails}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <span class="expense-amount fs-5">$${expense.amount.toFixed(2)}</span>
+                                ${commentCount > 0 ? `
+                                    <div class="mt-1">
+                                        <span class="badge bg-secondary">
+                                            <i class="bi bi-chat"></i> ${commentCount}
+                                        </span>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                expensesListContainer.appendChild(expenseItem);
+                
+                // Add event listener to show expense details
+                expenseItem.addEventListener('click', () => showExpenseDetails(expense.id));
+            });
+        }
+
+        // Calculate and update balances
+        function updateBalances() {
+            // Create a map to track what each person owes/is owed
+            const balances = {};
+            appData.group.members.forEach(member => {
+                balances[member.id] = 0;
+            });
+            
+            // Process all expenses
+            appData.expenses.forEach(expense => {
+                // Add full amount to the person who paid
+                balances[expense.paidBy] += parseFloat(expense.amount);
+                
+                // Subtract each person's share
+                expense.splits.forEach(split => {
+                    balances[split.memberId] -= parseFloat(split.amount);
+                });
+            });
+            
+            // Process all settlements
+            appData.settlements.forEach(settlement => {
+                balances[settlement.from] -= parseFloat(settlement.amount);
+                balances[settlement.to] += parseFloat(settlement.amount);
+            });
+            
+            // Update balances summary
+            const balancesSummaryContainer = document.getElementById('balancesSummary');
+            balancesSummaryContainer.innerHTML = '';
+            
+            appData.group.members.forEach(member => {
+                const balance = balances[member.id];
+                const balanceClass = balance > 0 ? 'debt-positive' : balance < 0 ? 'debt-negative' : '';
+                
+                const memberBalance = document.createElement('div');
+                memberBalance.className = 'd-flex justify-content-between align-items-center mb-2';
+                memberBalance.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <span class="user-icon me-2" style="background-color: ${member.color}">${member.name.charAt(0)}</span>
+                        <span>${member.name}${member.id === appData.currentUser ? ' (You)' : ''}</span>
+                    </div>
+                    <span class="${balanceClass}">
+                        ${balance > 0 ? `gets back ${balance.toFixed(2)}` : 
+                          balance < 0 ? `owes ${Math.abs(balance).toFixed(2)}` : 
+                          `settled up`}
+                    </span>
+                `;
+                
+                balancesSummaryContainer.appendChild(memberBalance);
+            });
+            
+            // Update detailed balances - simplified debt optimization
+            const detailedBalancesContainer = document.getElementById('detailedBalances');
+            detailedBalancesContainer.innerHTML = '';
+            
+            // Find who owes whom
+            const debts = [];
+            appData.group.members.forEach(debtor => {
+                if (balances[debtor.id] < 0) { // This person owes money
+                    appData.group.members.forEach(creditor => {
+                        if (balances[creditor.id] > 0) { // This person is owed money
+                            // Calculate a potential debt payment
+                            const maxPayment = Math.min(Math.abs(balances[debtor.id]), balances[creditor.id]);
+                            if (maxPayment > 0.01) { // Only if significant amount
+                                debts.push({
+                                    from: debtor,
+                                    to: creditor,
+                                    amount: maxPayment
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+            
+            if (debts.length === 0) {
+                detailedBalancesContainer.innerHTML = `
+                    <div class="alert alert-success">
+                        Everyone is settled up! No payments needed.
+                    </div>
+                `;
+            } else {
+                debts.forEach(debt => {
+                    const debtItem = document.createElement('div');
+                    debtItem.className = 'mb-3 p-2 border-bottom';
+                    debtItem.innerHTML = `
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="user-icon me-2" style="background-color: ${debt.from.color}">${debt.from.name.charAt(0)}</span>
+                                <span>${debt.from.name}</span>
+                                <span class="mx-2">→</span>
+                                <span class="user-icon me-2" style="background-color: ${debt.to.color}">${debt.to.name.charAt(0)}</span>
+                                <span>${debt.to.name}</span>
+                            </div>
+                            <div>
+                                <span class="fw-bold">${debt.amount.toFixed(2)}</span>
+                            </div>
+                        </div>
+                    `;
+                    detailedBalancesContainer.appendChild(debtItem);
+                });
+            }
+        }
+
+        // Update the activity list
+        function updateActivityList() {
+            const activityListContainer = document.getElementById('activityList');
+            activityListContainer.innerHTML = '';
+            
+            if (appData.activities.length === 0) {
+                activityListContainer.innerHTML = `
+                    <div class="alert alert-info">
+                        No activity recorded yet.
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort activities by date (newest first)
+            const sortedActivities = [...appData.activities].sort((a, b) => 
+                new Date(b.timestamp) - new Date(a.timestamp)
+            );
+            
+            sortedActivities.forEach(activity => {
+                const activityItem = document.createElement('div');
+                activityItem.className = 'list-group-item';
+                
+                let icon = '';
+                switch (activity.type) {
+                    case 'expense-added':
+                        icon = 'bi-receipt';
+                        break;
+                    case 'expense-deleted':
+                        icon = 'bi-trash';
+                        break;
+                    case 'settlement':
+                        icon = 'bi-cash-coin';
+                        break;
+                    case 'comment':
+                        icon = 'bi-chat-dots';
+                        break;
+                    case 'member-added':
+                        icon = 'bi-person-plus';
+                        break;
+                    case 'member-removed':
+                        icon = 'bi-person-dash';
+                        break;
+                    default:
+                        icon = 'bi-clock-history';
+                }
+                
+                activityItem.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <i class="bi ${icon} me-2"></i>
+                            <span>${activity.description}</span>
+                        </div>
+                        <small class="text-muted">${formatDateTime(activity.timestamp)}</small>
+                    </div>
+                `;
+                
+                activityListContainer.appendChild(activityItem);
+            });
+        }
+
+        // Update the dropdown for who paid the expense
+        function updateExpensePaidByDropdown() {
+            const expensePaidByDropdown = document.getElementById('expensePaidBy');
+            expensePaidByDropdown.innerHTML = '';
+            
+            appData.group.members.forEach(member => {
+                const option = document.createElement('option');
+                option.value = member.id;
+                option.textContent = member.name + (member.id === appData.currentUser ? ' (You)' : '');
+                // Set current user as default payer
+                if (member.id === appData.currentUser) {
+                    option.selected = true;
+                }
+                expensePaidByDropdown.appendChild(option);
+            });
+        }
+
+        // Update checkboxes for equal split members
+        function updateEqualSplitMembersCheckboxes() {
+            const equalSplitMembersContainer = document.getElementById('equalSplitMembers');
+            equalSplitMembersContainer.innerHTML = '';
+            
+            appData.group.members.forEach(member => {
+                const memberDiv = document.createElement('div');
+                memberDiv.className = 'form-check';
+                memberDiv.innerHTML = `
+                    <input class="form-check-input" type="checkbox" value="${member.id}" id="member-${member.id}" checked>
+                    <label class="form-check-label" for="member-${member.id}">
+                        ${member.name}${member.id === appData.currentUser ? ' (You)' : ''}
+                    </label>
+                `;
+                equalSplitMembersContainer.appendChild(memberDiv);
+            });
+            
+            updateExactAmountFields();
+            updatePercentageFields();
+        }
+
+        // Update input fields for exact amount split
+        function updateExactAmountFields() {
+            const exactSplitAmountsContainer = document.getElementById('exactSplitAmounts');
+            exactSplitAmountsContainer.innerHTML = '';
+            
+            appData.group.members.forEach(member => {
+                const memberDiv = document.createElement('div');
+                memberDiv.className = 'input-group mb-2';
+                memberDiv.innerHTML = `
+                    <span class="input-group-text">
+                        <span class="user-icon me-2" style="background-color: ${member.color}; width: 24px; height: 24px; font-size: 12px;">
+                            ${member.name.charAt(0)}
+                        </span>
+                        ${member.name}
+                    </span>
+                    <span class="input-group-text">$</span>
+                    <input type="number" class="form-control exact-amount-input" 
+                           data-member-id="${member.id}" min="0" step="0.01" value="0">
+                `;
+                exactSplitAmountsContainer.appendChild(memberDiv);
+            });
+        }
+
+        // Update input fields for percentage split
+        function updatePercentageFields() {
+            const percentageSplitAmountsContainer = document.getElementById('percentageSplitAmounts');
+            percentageSplitAmountsContainer.innerHTML = '';
+            
+            const defaultPercentage = (100 / appData.group.members.length).toFixed(2);
+            
+            appData.group.members.forEach(member => {
+                const memberDiv = document.createElement('div');
+                memberDiv.className = 'input-group mb-2';
+                memberDiv.innerHTML = `
+                    <span class="input-group-text">
+                        <span class="user-icon me-2" style="background-color: ${member.color}; width: 24px; height: 24px; font-size: 12px;">
+                            ${member.name.charAt(0)}
+                        </span>
+                        ${member.name}
+                    </span>
+                    <input type="number" class="form-control percentage-input" 
+                           data-member-id="${member.id}" min="0" max="100" step="0.01" value="${defaultPercentage}">
+                    <span class="input-group-text">%</span>
+                `;
+                percentageSplitAmountsContainer.appendChild(memberDiv);
+            });
+            
+            updatePercentageRemaining();
+        }
+
+        // Update dropdowns for settlement form
+        function updateSettleFormDropdowns() {
+            const settleFromDropdown = document.getElementById('settleFrom');
+            const settleToDropdown = document.getElementById('settleTo');
+            
+            settleFromDropdown.innerHTML = '';
+            settleToDropdown.innerHTML = '';
+            
+            // Populate "From" dropdown
+            appData.group.members.forEach(member => {
+                const option = document.createElement('option');
+                option.value = member.id;
+                option.textContent = member.name + (member.id === appData.currentUser ? ' (You)' : '');
+                settleFromDropdown.appendChild(option);
+            });
+            
+            // Trigger update of "To" dropdown
+            updateSettleToDropdown();
+        }
+
+        // Update "To" dropdown based on selected "From" value
+        function updateSettleToDropdown() {
+            const settleFromDropdown = document.getElementById('settleFrom');
+            const settleToDropdown = document.getElementById('settleTo');
+            const selectedFromId = settleFromDropdown.value;
+            
+            settleToDropdown.innerHTML = '';
+            
+            // Populate "To" dropdown with everyone except the selected "From" person
+            appData.group.members.forEach(member => {
+                if (member.id !== selectedFromId) {
+                    const option = document.createElement('option');
+                    option.value = member.id;
+                    option.textContent = member.name + (member.id === appData.currentUser ? ' (You)' : '');
+                    settleToDropdown.appendChild(option);
+                }
+            });
+        }
+
+        // Show different split method section based on selected option
+        function updateSplitMethodSection() {
+            const splitMethod = document.querySelector('input[name="splitMethod"]:checked').value;
+            const splitEqualSection = document.getElementById('splitEqualSection');
+            const splitExactSection = document.getElementById('splitExactSection');
+            const splitPercentageSection = document.getElementById('splitPercentageSection');
+            
+            // Hide all sections
+            splitEqualSection.classList.add('d-none');
+            splitExactSection.classList.add('d-none');
+            splitPercentageSection.classList.add('d-none');
+            
+            // Show selected section
+            if (splitMethod === 'equal') {
+                splitEqualSection.classList.remove('d-none');
+            } else if (splitMethod === 'exact') {
+                splitExactSection.classList.remove('d-none');
+                updateExactAmountRemaining();
+            } else if (splitMethod === 'percentage') {
+                splitPercentageSection.classList.remove('d-none');
+                updatePercentageRemaining();
+            }
+        }
+
+        // Update the remaining amount for exact split
+        function updateExactAmountRemaining() {
+            const expenseAmount = parseFloat(document.getElementById('expenseAmount').value) || 0;
+            const exactAmountInputs = document.querySelectorAll('.exact-amount-input');
+            
+            let totalAssigned = 0;
+            exactAmountInputs.forEach(input => {
+                totalAssigned += parseFloat(input.value) || 0;
+            });
+            
+            const remaining = (expenseAmount - totalAssigned).toFixed(2);
+            document.getElementById('exactAmountRemaining').textContent = remaining;
+        }
+
+        // Update the remaining percentage for percentage split
+        function updatePercentageRemaining() {
+            const percentageInputs = document.querySelectorAll('.percentage-input');
+            
+            let totalPercentage = 0;
+            percentageInputs.forEach(input => {
+                totalPercentage += parseFloat(input.value) || 0;
+            });
+            
+            const remaining = (100 - totalPercentage).toFixed(2);
+            document.getElementById('percentageRemaining').textContent = remaining;
+        }
+
+        // Save a new expense
+        function saveExpense() {
+            // Get form values
+            const description = document.getElementById('expenseDescription').value.trim();
+            const amountStr = document.getElementById('expenseAmount').value;
+            const amount = parseFloat(amountStr);
+            const paidBy = document.getElementById('expensePaidBy').value;
+            const date = document.getElementById('expenseDate').value;
+            const notes = document.getElementById('expenseNotes').value.trim();
+            const splitMethod = document.querySelector('input[name="splitMethod"]:checked').value;
+            
+            // Validate input
+            if (!description || isNaN(amount) || amount <= 0 || !date) {
+                alert('Please fill in all required fields with valid values.');
+                return;
+            }
+            
+            // Calculate splits based on the selected method
+            let splits = [];
+            
+            if (splitMethod === 'equal') {
+                // Get selected members for equal split
+                const selectedMembers = Array.from(document.querySelectorAll('#equalSplitMembers input:checked'))
+                    .map(checkbox => checkbox.value);
+                
+                if (selectedMembers.length === 0) {
+                    alert('Please select at least one person to split with.');
+                    return;
+                }
+                
+                const amountPerPerson = amount / selectedMembers.length;
+                
+                splits = selectedMembers.map(memberId => ({
+                    memberId,
+                    amount: amountPerPerson
+                }));
+            } else if (splitMethod === 'exact') {
+                // Get exact amounts for each member
+                const exactAmounts = Array.from(document.querySelectorAll('.exact-amount-input'))
+                    .map(input => ({
+                        memberId: input.getAttribute('data-member-id'),
+                        amount: parseFloat(input.value) || 0
+                    }))
+                    .filter(split => split.amount > 0);
+                
+                const totalExact = exactAmounts.reduce((sum, split) => sum + split.amount, 0);
+                
+                if (Math.abs(totalExact - amount) > 0.01) {
+                    alert('The sum of individual amounts must equal the total expense amount.');
+                    return;
+                }
+                
+                splits = exactAmounts;
+            } else if (splitMethod === 'percentage') {
+                // Get percentages for each member
+                const percentages = Array.from(document.querySelectorAll('.percentage-input'))
+                    .map(input => ({
+                        memberId: input.getAttribute('data-member-id'),
+                        percentage: parseFloat(input.value) || 0
+                    }));
+                
+                const totalPercentage = percentages.reduce((sum, item) => sum + item.percentage, 0);
+                
+                if (Math.abs(totalPercentage - 100) > 0.01) {
+                    alert('The sum of percentages must equal 100%.');
+                    return;
+                }
+                
+                splits = percentages.map(item => ({
+                    memberId: item.memberId,
+                    amount: (amount * item.percentage / 100)
+                }));
+            }
+            
+            // Create expense object
+            const expense = {
+                id: 'expense-' + Date.now(),
+                description,
+                amount,
+                paidBy,
+                date,
+                notes,
+                splitMethod,
+                splits,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Add to expenses array
+            appData.expenses.push(expense);
+            
+            // Record activity
+            const paidByMember = appData.group.members.find(m => m.id === paidBy);
+            addActivity({
+                type: 'expense-added',
+                description: `${paidByMember.name} added "${description}" expense (${amount.toFixed(2)})`,
+                relatedId: expense.id
+            });
+            
+            // Save data and update UI
+            saveDataToStorage();
+            updateUI();
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addExpenseModal'));
+            modal.hide();
+            
+            // Reset form
+            document.getElementById('expenseForm').reset();
+            document.getElementById('expenseDate').value = new Date().toISOString().split('T')[0];
+        }
+
+        // Show expense details
+        function showExpenseDetails(expenseId) {
+            const expense = appData.expenses.find(e => e.id === expenseId);
+            if (!expense) return;
+            
+            const paidByMember = appData.group.members.find(m => m.id === expense.paidBy);
+            const modalBody = document.getElementById('expenseDetailsBody');
+            
+            let splitDetails = '';
+            expense.splits.forEach(split => {
+                const member = appData.group.members.find(m => m.id === split.memberId);
+                if (member) {
+                    splitDetails += `
+                        <div class="d-flex justify-content-between mb-1">
+                            <div>
+                                <span class="user-icon me-2" style="background-color: ${member.color}; width: 24px; height: 24px; font-size: 12px;">
+                                    ${member.name.charAt(0)}
+                                </span>
+                                ${member.name}
+                            </div>
+                            <div>${split.amount.toFixed(2)}</div>
+                        </div>
+                    `;
+                }
+            });
+            
+            // Get comments for this expense
+            const expenseComments = appData.comments.filter(c => c.expenseId === expenseId);
+            let commentsHtml = '';
+            
+            if (expenseComments.length > 0) {
+                commentsHtml = `
+                    <h6 class="mt-3">Comments</h6>
+                    <div class="comment-list">
+                `;
+                
+                expenseComments.forEach(comment => {
+                    const commentAuthor = appData.group.members.find(m => m.id === comment.authorId);
+                    commentsHtml += `
+                        <div class="d-flex mb-2">
+                            <span class="user-icon me-2" style="background-color: ${commentAuthor.color}; width: 24px; height: 24px; font-size: 12px;">
+                                ${commentAuthor.name.charAt(0)}
+                            </span>
+                            <div class="border rounded p-2 flex-grow-1">
+                                <div class="d-flex justify-content-between">
+                                    <small class="text-muted">${commentAuthor.name}</small>
+                                    <small class="text-muted">${formatDateTime(comment.timestamp)}</small>
+                                </div>
+                                <div>${comment.text}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                commentsHtml += '</div>';
+            }
+            
+            modalBody.innerHTML = `
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4>${expense.description}</h4>
+                        <span class="fs-4">${expense.amount.toFixed(2)}</span>
+                    </div>
+                    <div class="mb-3">
+                        <i class="bi bi-calendar me-2"></i> ${formatDate(expense.date)}
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex align-items-center">
+                            <span class="user-icon me-2" style="background-color: ${paidByMember.color}">
+                                ${paidByMember.name.charAt(0)}
+                            </span>
+                            <span>${paidByMember.name} paid</span>
+                        </div>
+                    </div>
+                    ${expense.notes ? `
+                        <div class="mb-3">
+                            <i class="bi bi-sticky me-2"></i> <strong>Notes:</strong>
+                            <p class="mt-1">${expense.notes}</p>
+                        </div>
+                    ` : ''}
+                </div>
+                
+                <div class="mb-3">
+                    <h6>Split Details (${expense.splitMethod === 'equal' ? 'Equal' : 
+                                      expense.splitMethod === 'exact' ? 'Exact Amounts' : 
+                                      'Percentages'})</h6>
+                    <div class="border rounded p-2">
+                        ${splitDetails}
+                    </div>
+                </div>
+                
+                ${commentsHtml}
+                
+                <div class="d-flex justify-content-center mt-3">
+                    <button type="button" class="btn btn-outline-primary" id="addCommentBtn" data-expense-id="${expense.id}">
+                        <i class="bi bi-chat-dots me-1"></i> Add Comment
+                    </button>
+                </div>
+            `;
+            
+            // Set expense ID for delete button
+            document.getElementById('deleteExpenseBtn').setAttribute('data-expense-id', expense.id);
+            
+            // Set title
+            document.getElementById('expenseDetailsTitle').textContent = expense.description;
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('expenseDetailsModal'));
+            modal.show();
+            
+            // Add event listener for comment button
+            document.getElementById('addCommentBtn').addEventListener('click', function() {
+                const expenseId = this.getAttribute('data-expense-id');
+                showCommentModal(expenseId);
+                
+                // Close expense details modal
+                const expenseModal = bootstrap.Modal.getInstance(document.getElementById('expenseDetailsModal'));
+                expenseModal.hide();
+            });
+        }
+
+        // Delete an expense
+        function deleteExpense() {
+            const expenseId = document.getElementById('deleteExpenseBtn').getAttribute('data-expense-id');
+            const expense = appData.expenses.find(e => e.id === expenseId);
+            
+            if (!expense) return;
+            
+            if (confirm(`Are you sure you want to delete "${expense.description}" expense?`)) {
+                // Remove expense
+                appData.expenses = appData.expenses.filter(e => e.id !== expenseId);
+                
+                // Remove related comments
+                appData.comments = appData.comments.filter(c => c.expenseId !== expenseId);
+                
+                // Record activity
+                addActivity({
+                    type: 'expense-deleted',
+                    description: `"${expense.description}" expense was deleted (${expense.amount.toFixed(2)})`,
+                    relatedId: expense.id
+                });
+                
+                // Save data and update UI
+                saveDataToStorage();
+                updateUI();
+                
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('expenseDetailsModal'));
+                modal.hide();
+            }
+        }
+
+        // Show comment modal
+        function showCommentModal(expenseId) {
+            const expense = appData.expenses.find(e => e.id === expenseId);
+            if (!expense) return;
+            
+            // Set expense ID for comment form
+            document.getElementById('commentExpenseId').value = expenseId;
+            
+            // Display existing comments
+            const existingCommentsContainer = document.getElementById('existingComments');
+            existingCommentsContainer.innerHTML = '';
+            
+            const expenseComments = appData.comments.filter(c => c.expenseId === expenseId);
+            
+            if (expenseComments.length > 0) {
+                existingCommentsContainer.innerHTML = '<h6 class="mt-3">Existing Comments</h6>';
+                
+                expenseComments.forEach(comment => {
+                    const commentAuthor = appData.group.members.find(m => m.id === comment.authorId);
+                    const commentDiv = document.createElement('div');
+                    commentDiv.className = 'd-flex mb-2';
+                    commentDiv.innerHTML = `
+                        <span class="user-icon me-2" style="background-color: ${commentAuthor.color}; width: 24px; height: 24px; font-size: 12px;">
+                            ${commentAuthor.name.charAt(0)}
+                        </span>
+                        <div class="border rounded p-2 flex-grow-1">
+                            <div class="d-flex justify-content-between">
+                                <small class="text-muted">${commentAuthor.name}</small>
+                                <small class="text-muted">${formatDateTime(comment.timestamp)}</small>
+                            </div>
+                            <div>${comment.text}</div>
+                        </div>
+                    `;
+                    existingCommentsContainer.appendChild(commentDiv);
+                });
+            }
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('commentModal'));
+            modal.show();
+        }
+
+        // Save a comment
+        function saveComment() {
+            const expenseId = document.getElementById('commentExpenseId').value;
+            const commentText = document.getElementById('commentText').value.trim();
+            
+            if (!expenseId || !commentText) {
+                alert('Please enter a comment.');
+                return;
+            }
+            
+            const expense = appData.expenses.find(e => e.id === expenseId);
+            if (!expense) return;
+            
+            // Create comment object
+            const comment = {
+                id: 'comment-' + Date.now(),
+                expenseId,
+                authorId: appData.currentUser,
+                text: commentText,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Add to comments array
+            appData.comments.push(comment);
+            
+            // Record activity
+            const authorMember = appData.group.members.find(m => m.id === appData.currentUser);
+            addActivity({
+                type: 'comment',
+                description: `${authorMember.name} commented on "${expense.description}"`,
+                relatedId: expense.id
+            });
+            
+            // Save data and update UI
+            saveDataToStorage();
+            updateUI();
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('commentModal'));
+            modal.hide();
+            
+            // Reset form
+            document.getElementById('commentForm').reset();
+        }
+
+        // Add a new group member
+        function addGroupMember() {
+            const newMemberName = document.getElementById('newMemberName').value.trim();
+            
+            if (!newMemberName) {
+                alert('Please enter a member name.');
+                return;
+            }
+            
+            // Generate a random color for the new member
+            const colors = ['#3498db', '#9b59b6', '#e74c3c', '#e67e22', '#f1c40f', '#1abc9c', '#2ecc71'];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            // Create member object
+            const newMember = {
+                id: 'user-' + Date.now(),
+                name: newMemberName,
+                email: '',
+                color: randomColor
+            };
+            
+            // Add to members array
+            appData.group.members.push(newMember);
+            
+            // Record activity
+            addActivity({
+                type: 'member-added',
+                description: `${newMemberName} was added to the group`,
+                relatedId: newMember.id
+            });
+            
+            // Save data and update UI
+            saveDataToStorage();
+            updateGroupInfo();
+            updateMembersList();
+            updateExpensePaidByDropdown();
+            updateEqualSplitMembersCheckboxes();
+            updateSettleFormDropdowns();
+            
+            // Clear input
+            document.getElementById('newMemberName').value = '';
+        }
+
+        // Remove a group member
+        function removeGroupMember(memberId) {
+            const member = appData.group.members.find(m => m.id === memberId);
+            
+            if (!member) return;
+            
+            if (confirm(`Are you sure you want to remove ${member.name} from the group?`)) {
+                // Check if member is involved in any expenses
+                const memberHasExpenses = appData.expenses.some(expense => 
+                    expense.paidBy === memberId || expense.splits.some(split => split.memberId === memberId)
+                );
+                
+                if (memberHasExpenses) {
+                    alert(`Cannot remove ${member.name} because they are involved in one or more expenses.`);
+                    return;
+                }
+                
+                // Remove member
+                appData.group.members = appData.group.members.filter(m => m.id !== memberId);
+                
+                // Record activity
+                addActivity({
+                    type: 'member-removed',
+                    description: `${member.name} was removed from the group`,
+                    relatedId: member.id
+                });
+                
+                // Save data and update UI
+                saveDataToStorage();
+                updateGroupInfo();
+                updateMembersList();
+                updateExpensePaidByDropdown();
+                updateEqualSplitMembersCheckboxes();
+                updateSettleFormDropdowns();
+            }
+        }
+
+        // Save group information
+        function saveGroup() {
+            const groupName = document.getElementById('groupName').value.trim();
+            
+            if (!groupName) {
+                alert('Please enter a group name.');
+                return;
+            }
+            
+            // Update group name
+            appData.group.name = groupName;
+            
+            // Save data and update UI
+            saveDataToStorage();
+            updateGroupInfo();
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('groupModal'));
+            modal.hide();
+            
+            // Show success message
+            alert('Group information saved successfully!');
+        }
+
+        // Record a settlement
+        function recordSettlement() {
+            const fromId = document.getElementById('settleFrom').value;
+            const toId = document.getElementById('settleTo').value;
+            const amountStr = document.getElementById('settleAmount').value;
+            const amount = parseFloat(amountStr);
+            
+            // Validate input
+            if (!fromId || !toId || isNaN(amount) || amount <= 0) {
+                alert('Please fill in all fields with valid values.');
+                return;
+            }
+            
+            // Create settlement object
+            const settlement = {
+                id: 'settlement-' + Date.now(),
+                from: fromId,
+                to: toId,
+                amount,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Add to settlements array
+            appData.settlements.push(settlement);
+            
+            // Record activity
+            // ... existing code ...
+            const fromMember = appData.group.members.find(m => m.id === fromId);
+            const toMember = appData.group.members.find(m => m.id === toId);
+            
+            addActivity({
+                type: 'settlement',
+                description: `${fromMember.name} paid ${amount.toFixed(2)} to ${toMember.name}`,
+                relatedId: settlement.id
+            });
+            
+            // Save data and update UI
+            saveDataToStorage();
+            updateUI();
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('settleModal'));
+            modal.hide();
+            
+            // Reset form
+            document.getElementById('settleForm').reset();
+            
+            // Show success message
+            alert('Payment recorded successfully!');
+        }
+
+        // Share functions
+        function shareViaWhatsApp() {
+            const groupName = appData.group.name;
+            const message = `Join our expense group "${groupName}" on SplitEase!`;
+            const encodedMessage = encodeURIComponent(message);
+            window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+        }
+
+        function shareViaEmail() {
+            const groupName = appData.group.name;
+            const subject = `Join ${groupName} on SplitEase`;
+            const body = `I've created an expense group "${groupName}" on SplitEase. Join to track and split expenses!`;
+            const encodedSubject = encodeURIComponent(subject);
+            const encodedBody = encodeURIComponent(body);
+            window.location.href = `mailto:?subject=${encodedSubject}&body=${encodedBody}`;
+        }
+
+        function shareViaSMS() {
+            const groupName = appData.group.name;
+            const message = `Join our expense group "${groupName}" on SplitEase!`;
+            const encodedMessage = encodeURIComponent(message);
+            window.location.href = `sms:?body=${encodedMessage}`;
+        }
+
+        // Helper function to format date
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+
+        // Helper function to format date and time
+        function formatDateTime(dateString) {
+            const options = { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+
+        // Helper function to add activity
+        function addActivity(activity) {
+            activity.timestamp = new Date().toISOString();
+            appData.activities.unshift(activity);
+            
+            // Keep only last 100 activities
+            if (appData.activities.length > 100) {
+                appData.activities = appData.activities.slice(0, 100);
+            }
+        }
+
+        // Add logout functionality
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

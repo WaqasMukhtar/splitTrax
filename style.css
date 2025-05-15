@@ -1,0 +1,62 @@
+
+.sidebar {
+    height: calc(100vh - 56px);
+    position: sticky;
+    top: 56px;
+}
+.expense-item:hover {
+    background-color: rgba(0,0,0,0.05);
+    cursor: pointer;
+}
+.navbar-brand {
+    font-weight: bold;
+    color: #20BF55 !important;
+}
+.btn-primary {
+    background-color: #20BF55;
+    border-color: #20BF55;
+}
+.btn-primary:hover {
+    background-color: #1CA64A;
+    border-color: #1CA64A;
+}
+.btn-outline-primary {
+    color: #20BF55;
+    border-color: #20BF55;
+}
+.btn-outline-primary:hover {
+    background-color: #20BF55;
+    border-color: #20BF55;
+}
+.nav-pills .nav-link.active {
+    background-color: #20BF55;
+}
+.badge-primary {
+    background-color: #20BF55;
+}
+.expense-amount {
+    font-weight: bold;
+}
+.debt-positive {
+    color: #20BF55;
+}
+.debt-negative {
+    color: #dc3545;
+}
+#settleModal .modal-header {
+    background-color: #f8f9fa;
+}
+.user-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+}
+.share-option i {
+    font-size: 24px;
+    margin-right: 10px;
+}
