@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SplitEase - Expense Sharing App</title>
+    <title>SplitTrax - Expense Sharing App</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 <link rel="stylesheet" href="style.css">
@@ -16,7 +16,7 @@
             <div class="navbar-wrapper mx-auto" style="width:100%; background: white; border-radius: 15px; box-shadow: 5px 5px 5px 5px rgba(0,0,0,0.1); padding: 1rem 1.5rem;">
                 <div class="d-flex justify-content-between align-items-center w-100">
                     <a class="navbar-brand fw-bold" href="#">
-                        <img src="split.png" alt="SplitEase Logo" width="110px" height="50px" class="d-inline-block align-text-top me-2">
+                        <img src="split.png" alt="SplitTrax Logo" width="110px" height="50px" class="d-inline-block align-text-top me-2">
                     </a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                         <span class="navbar-toggler-icon"></span>
@@ -410,7 +410,7 @@
 
         // Load data from localStorage if available
         function loadDataFromStorage() {
-            const savedData = localStorage.getItem('splitEaseData');
+            const savedData = localStorage.getItem('SplitTraxData');
             if (savedData) {
                 appData = JSON.parse(savedData);
             }
@@ -418,7 +418,7 @@
 
         // Save data to localStorage
         function saveDataToStorage() {
-            localStorage.setItem('splitEaseData', JSON.stringify(appData));
+            localStorage.setItem('SplitTraxData', JSON.stringify(appData));
         }
 
         // Initialize app components
@@ -1481,15 +1481,15 @@
         // Share functions
         function shareViaWhatsApp() {
             const groupName = appData.group.name;
-            const message = `Join our expense group "${groupName}" on SplitEase!`;
+            const message = `Join our expense group "${groupName}" on SplitTrax!`;
             const encodedMessage = encodeURIComponent(message);
             window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
         }
 
         function shareViaEmail() {
             const groupName = appData.group.name;
-            const subject = `Join ${groupName} on SplitEase`;
-            const body = `I've created an expense group "${groupName}" on SplitEase. Join to track and split expenses!`;
+            const subject = `Join ${groupName} on SplitTrax`;
+            const body = `I've created an expense group "${groupName}" on SplitTrax. Join to track and split expenses!`;
             const encodedSubject = encodeURIComponent(subject);
             const encodedBody = encodeURIComponent(body);
             window.location.href = `mailto:?subject=${encodedSubject}&body=${encodedBody}`;
@@ -1497,7 +1497,7 @@
 
         function shareViaSMS() {
             const groupName = appData.group.name;
-            const message = `Join our expense group "${groupName}" on SplitEase!`;
+            const message = `Join our expense group "${groupName}" on SplitTrax!`;
             const encodedMessage = encodeURIComponent(message);
             window.location.href = `sms:?body=${encodedMessage}`;
         }
